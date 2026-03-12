@@ -1,0 +1,155 @@
+{
+  "id": "gstack-intro",
+  "title": "gstack — Workflow Skills for Claude Code",
+  "description": "A guided tour of gstack: six opinionated workflow skills that turn Claude Code from one generic assistant into a team of specialists. Covers the skill system, the browse engine, CLI architecture, and testing.",
+  "version": "1.0.0",
+  "steps": [
+    {
+      "id": "overview",
+      "title": "Welcome to gstack",
+      "description": "gstack is a collection of six workflow skills for Claude Code — plan review, code review, shipping, browser automation, and retrospectives. Each skill gives the agent a different cognitive mode: founder taste, engineering rigor, paranoid reviewer, release engineer, QA tester, or engineering manager. The project is organized with one directory per skill and a core headless browser engine in browse/.",
+      "focusDirectory": "",
+      "colorMode": "fileTypes"
+    },
+    {
+      "id": "skill-definitions",
+      "title": "The Skill System",
+      "description": "Each skill is defined by a SKILL.md file — a Markdown prompt that Claude Code discovers and executes as a slash command. The six skills are: /plan-ceo-review (founder mode), /plan-eng-review (eng manager mode), /review (paranoid staff engineer), /ship (release engineer), /browse (QA engineer via headless Chromium), and /retro (engineering manager retrospectives). The root SKILL.md defines the browse skill entry point.",
+      "focusDirectory": "",
+      "colorMode": "fileTypes",
+      "highlightLayers": [
+        {
+          "id": "skill-files",
+          "name": "Skill Definitions",
+          "color": "#8b5cf6",
+          "items": [
+            { "path": "SKILL.md", "type": "file" },
+            { "path": "ship", "type": "directory" },
+            { "path": "review", "type": "directory" },
+            { "path": "plan-ceo-review", "type": "directory" },
+            { "path": "plan-eng-review", "type": "directory" },
+            { "path": "retro", "type": "directory" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        }
+      ]
+    },
+    {
+      "id": "browse-engine",
+      "title": "The Browse Engine",
+      "description": "The core technical component — a compiled headless Chromium CLI built on Playwright. It runs a persistent browser daemon on localhost (port 9400-9410) with bearer token auth. First call starts the server (~3s), every subsequent call runs in ~100-200ms. The browser state (cookies, tabs, localStorage) persists between commands and auto-shuts down after 30 minutes idle.",
+      "focusDirectory": "browse",
+      "colorMode": "fileTypes",
+      "highlightLayers": [
+        {
+          "id": "browse-core",
+          "name": "Browse Source",
+          "color": "#3b82f6",
+          "items": [
+            { "path": "browse/src", "type": "directory" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        },
+        {
+          "id": "browse-output",
+          "name": "Compiled Binary",
+          "color": "#f59e0b",
+          "items": [
+            { "path": "browse/dist", "type": "directory" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        }
+      ]
+    },
+    {
+      "id": "cli-architecture",
+      "title": "CLI & Server Architecture",
+      "description": "The browse CLI is split into focused modules: cli.ts is the entry point and command router, server.ts manages the persistent Chromium daemon, and browser-manager.ts handles Playwright lifecycle. Commands are organized by concern — read-commands.ts (text, html, links, snapshot), write-commands.ts (click, fill, type), meta-commands.ts (tabs, viewport, cookies), and snapshot.ts builds the accessibility tree with @ref-based element selection.",
+      "focusDirectory": "browse/src",
+      "colorMode": "fileTypes",
+      "highlightLayers": [
+        {
+          "id": "entry-point",
+          "name": "Entry & Server",
+          "color": "#ef4444",
+          "items": [
+            { "path": "browse/src/cli.ts", "type": "file" },
+            { "path": "browse/src/server.ts", "type": "file" },
+            { "path": "browse/src/browser-manager.ts", "type": "file" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        },
+        {
+          "id": "command-modules",
+          "name": "Command Modules",
+          "color": "#22c55e",
+          "items": [
+            { "path": "browse/src/read-commands.ts", "type": "file" },
+            { "path": "browse/src/write-commands.ts", "type": "file" },
+            { "path": "browse/src/meta-commands.ts", "type": "file" },
+            { "path": "browse/src/snapshot.ts", "type": "file" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        }
+      ]
+    },
+    {
+      "id": "testing",
+      "title": "Integration Tests",
+      "description": "Tests live in browse/test/ and use a local test server (test-server.ts) with HTML fixtures to exercise the full CLI. commands.test.ts covers the command surface — navigation, content extraction, interaction, and inspection. snapshot.test.ts validates the accessibility tree and @ref-based selection system. Run tests with `bun test`.",
+      "focusDirectory": "browse/test",
+      "colorMode": "fileTypes",
+      "highlightLayers": [
+        {
+          "id": "test-files",
+          "name": "Test Files",
+          "color": "#06b6d4",
+          "items": [
+            { "path": "browse/test/commands.test.ts", "type": "file" },
+            { "path": "browse/test/snapshot.test.ts", "type": "file" },
+            { "path": "browse/test/test-server.ts", "type": "file" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        },
+        {
+          "id": "fixtures",
+          "name": "Test Fixtures",
+          "color": "#f97316",
+          "items": [
+            { "path": "browse/test/fixtures", "type": "directory" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        }
+      ]
+    },
+    {
+      "id": "setup-and-config",
+      "title": "Setup & Configuration",
+      "description": "The setup script handles one-time installation: it runs `bun install`, compiles the browse binary to browse/dist/browse (~58MB), and creates symlinks so Claude Code discovers each skill. package.json defines the build scripts. CLAUDE.md provides development instructions. The compiled binary and node_modules are gitignored — teammates just run `./setup` once after cloning.",
+      "focusDirectory": "",
+      "colorMode": "fileTypes",
+      "highlightLayers": [
+        {
+          "id": "config-files",
+          "name": "Setup & Config",
+          "color": "#ec4899",
+          "items": [
+            { "path": "setup", "type": "file" },
+            { "path": "package.json", "type": "file" },
+            { "path": "CLAUDE.md", "type": "file" },
+            { "path": "VERSION", "type": "file" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        }
+      ]
+    }
+  ]
+}
